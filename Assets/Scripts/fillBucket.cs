@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class FillBucket : MonoBehaviour
 {
-    public bool empty = true; // True if the glass is empty
-    public bool pour = false; // True if the glass should pour water
-    public GameObject waterMesh; // Visual representation of water in the glass
-    public ParticleSystem waterPour; // Particle system for pouring water
+    public bool empty = true; // true if the glass is empty
+    public bool pour = false; // true if the glass should pour water
+    public GameObject waterMesh; //  mock mesh
+    public ParticleSystem waterPour; // particlesuystm
 
-    public float tiltThreshold = 100f; // Tilt angle threshold for pouring
-    private bool isPouring = false; // Ensures the pouring logic runs only once
+    public float tiltThreshold = 100f; // Threshold of angle
+    private bool isPouring = false; // flags to allow
 
-    private ParticleSystem.EmissionModule waterEmission; // Emission module reference
+    private ParticleSystem.EmissionModule waterEmission; // this was not accesible from unity to modify directly so created a copied struct, modified it, then sent the values to the unity protected system!
 
     MeshRenderer waterMeshRenderer;
     //public float timer;
@@ -21,13 +21,12 @@ public class FillBucket : MonoBehaviour
 
     private void Start()
     {
-        // Initialize the state of the glass and water
         empty = true;
         waterMeshRenderer = waterMesh.GetComponent<MeshRenderer>();
         waterPour.Stop();
         //timer = 0f;
         waterMeshRenderer.enabled = false;
-        // Cache the EmissionModule reference
+        // emission ref
         waterEmission = waterPour.emission;
         resetted = false;
     }
@@ -40,10 +39,8 @@ public class FillBucket : MonoBehaviour
             waterMeshRenderer.enabled = true;
 
 
-            // Check the tilt angle of the glass
             float tiltAngle = Vector3.Angle(Vector3.up, transform.up);
 
-            // If the tilt is above the threshold and the glass is not empty
             if (tiltAngle > tiltThreshold && !empty)
             {
                 if (!isPouring)
@@ -52,13 +49,11 @@ public class FillBucket : MonoBehaviour
                 }
                 else
                 {
-                    // Ensure emission is enabled while pouring
                     SetEmissionEnabled(true);
                 }
             }
             else
             {
-                // Stop emitting new particles if the tilt is below the threshold
                 if (isPouring)
                 {
                     //tempTimer = timer;
@@ -66,9 +61,8 @@ public class FillBucket : MonoBehaviour
                 }
             }
 
-            // Check if the particle system has completed its cycle
             if (/*isPouring && !waterPour.isPlaying && tiltAngle <= tiltThreshold*/waterPour.particleCount==1000 && !resetted)
-            {
+            {//this is cycle check
                 isPouring = false; // Reset pouring state
                 EmptyGlass(); // Empty the glass
                 Debug.Log("bucket is now empty");
@@ -80,6 +74,7 @@ public class FillBucket : MonoBehaviour
                 EmptyGlass(); // Empty the glass
                 Debug.Log("bucket is now empty");
             }*/
+            //not needed anymore
         }
 
         else
@@ -92,7 +87,8 @@ public class FillBucket : MonoBehaviour
 
     void StartPouring()
     {
-        // Play the particle system and set the pouring flag
+        //setting bools
+
         waterPour.Play();
         SetEmissionEnabled(true);
         isPouring = true;
@@ -103,7 +99,6 @@ public class FillBucket : MonoBehaviour
     void StopEmission()
     {
         //timer = tempTimer;
-        // Disable new particle emission but keep the existing particles alive
         SetEmissionEnabled(false);
         Debug.Log("Pouring stopped as the tilt angle is below the threshold.");
         
@@ -111,15 +106,13 @@ public class FillBucket : MonoBehaviour
 
     void SetEmissionEnabled(bool enabled)
     {
-        // Safely modify the EmissionModule's enabled property
-        var emission = waterPour.emission; // Get a copy of the struct
-        emission.enabled = enabled;       // Modify the copy
+        var emission = waterPour.emission; 
+        emission.enabled = enabled;       
         //timer += Time.deltaTime;
     }
 
     void EmptyGlass()
     {
-        // Deactivate water mesh and mark the glass as empty
         //waterMesh.SetActive(false);
         waterMeshRenderer.enabled = false;
         empty = true;
