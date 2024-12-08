@@ -71,7 +71,7 @@ public class FairyUi : MonoBehaviour
             {
                 DialogueCompleted = true;
                 Debug.Log("DialogueCount");
-                canvasGroup.alpha = Mathf.MoveTowards(0, 1, Time.deltaTime* speed);
+                canvasGroup.alpha = Mathf.MoveTowards(canvasGroup.alpha, 1, Time.deltaTime* speed);
             }
         }
         else
